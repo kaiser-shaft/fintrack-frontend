@@ -1,13 +1,17 @@
 "use client";
 
 import { useAccounts, AccountCard } from "@/entities/account";
+import { CreateAccountDialog } from "@/features/create-account";
+import { CreateTransactionDialog } from "@/features/create-transaction";
 import { Button } from "@/shared/ui";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, Plus, Wallet, Coins } from "lucide-react";
 
 export const DashboardPage = () => {
     const { data: accounts, isLoading, error } = useAccounts();
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isTransactionOpen, setIsTransactionOpen] = useState(false);
     const router = useRouter();
 
     // Перенаправление на страницу входа при 401 Unauthorized
@@ -145,13 +149,25 @@ export const DashboardPage = () => {
                             </h2>
                         </div>
 
-                        <Button
-                            size="sm"
-                            className="gap-2 shadow-violet-500/10"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Добавить кошелек
-                        </Button>
+                        <div className="flex items-center gap-3">
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                className="gap-2"
+                                onClick={() => setIsTransactionOpen(true)}
+                            >
+                                <Plus className="h-4 w-4 text-violet-400" />
+                                Добавить операцию
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="gap-2 shadow-violet-500/10"
+                                onClick={() => setIsCreateOpen(true)}
+                            >
+                                <Plus className="h-4 w-4" />
+                                Добавить кошелек
+                            </Button>
+                        </div>
                     </div>
 
                     {!accounts || accounts.length === 0 ? (
@@ -168,7 +184,11 @@ export const DashboardPage = () => {
                                     отслеживать доходы и расходы.
                                 </p>
                             </div>
-                            <Button size="sm" className="mt-2">
+                            <Button
+                                size="sm"
+                                className="mt-2"
+                                onClick={() => setIsCreateOpen(true)}
+                            >
                                 Создать кошелек
                             </Button>
                         </div>
@@ -184,6 +204,16 @@ export const DashboardPage = () => {
                     )}
                 </section>
             </main>
+
+            {/* Подключаем модальное окно */}
+            <CreateAccountDialog
+                isOpen={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
+            <CreateTransactionDialog
+                isOpen={isTransactionOpen}
+                onClose={() => setIsTransactionOpen(false)}
+            />
         </div>
     );
 };
