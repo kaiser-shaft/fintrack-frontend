@@ -4,6 +4,19 @@ import { useAccounts, AccountCard } from "@/entities/account";
 import { CreateAccountDialog } from "@/features/create-account";
 import { CreateTransactionDialog } from "@/features/create-transaction";
 import { Button } from "@/shared/ui";
+import dynamic from "next/dynamic";
+
+const AnalyticsBoard = dynamic(
+    () => import("@/widgets/analytics-board").then((mod) => mod.AnalyticsBoard),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="h-64 w-full bg-neutral-900/10 border border-neutral-800/30 rounded-2xl animate-pulse flex items-center justify-center">
+                <span className="text-xs text-neutral-500">Загрузка аналитики...</span>
+            </div>
+        ),
+    }
+);
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, Plus, Wallet, Coins } from "lucide-react";
@@ -138,6 +151,9 @@ export const DashboardPage = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* Блок аналитики с графиками */}
+                <AnalyticsBoard />
 
                 {/* Секция кошельков */}
                 <section className="flex flex-col gap-6">
